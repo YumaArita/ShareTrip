@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Plan;
-use Illuminate\Http\Request;
+use App\Models\Schedules;
 use Inertia\Inertia;
 
 class PlanController extends Controller
@@ -11,8 +11,10 @@ class PlanController extends Controller
     public function index()
     {
         $plans = Plan::with('user')->latest()->get();
+        $schedules = Schedules::with('plan')->get();
         return Inertia::render('Plans/Index', [
             'plans' => $plans,
+            'schedules' => $schedules,
         ]);
     }
 }

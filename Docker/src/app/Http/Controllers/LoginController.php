@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\Auth\LoginCreateRequest;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -12,15 +12,12 @@ class LoginController extends Controller
         return Inertia::render('Auth/Login');
     }
 
-    public function store(Request $request) {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+    public function store(LoginCreateRequest $request) {
+        $validated = $request->validated();
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($validated)) {
             $request->session()->regenerate();
-            return redirect()->intended('/plans');
+            return redirect()->route('plans.index');
         }
 
         return back()->withErrors([
@@ -28,11 +25,11 @@ class LoginController extends Controller
         ]);
     }
 
-    public function destroy(Request $request) {
+    public function destroy(LoginCreateRequest $request) {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('/login');
+        return redirect()->route('login.create');
     }
 }
